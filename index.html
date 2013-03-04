@@ -137,8 +137,6 @@
 		
 		function getPeople() {
 
-			var peopleArray = new Array();
-
 			var transaction = db.transaction(["people"], "readonly"); 
 			var objectStore = transaction.objectStore("people");
 			objectStore.openCursor().onsuccess = function(event) {
@@ -148,7 +146,6 @@
 					console.log(cursor.value.firstName);
 					var record = cursor.value;
 					var p = new PersonModel(record.firstName, record.lastName, record.phone, record.email);
-					peopleArray.push(p);
 					my.vm.people.push(p);
 					cursor.continue();
 				}
