@@ -88,6 +88,8 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 	<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
 	<script type="text/javascript">
+		var db;
+		
 		function PersonModel(_firstName, _lastName, _phone, _email) {
 			var self = this;
 			
@@ -110,6 +112,14 @@
 			self.addPerson = function() {
 				var myPerson = new PersonModel(self.firstName(), self.lastName(), self.phone(), self.email());
 				self.people.push(myPerson);
+				
+				//Get a transaction
+				//default for OS list is all, default for type is read
+				var transaction = db.transaction(["people"],"readwrite");
+				//Ask for the objectStore
+				var store = transaction.objectStore("people");
+				
+				store.add(myPerson);
 			}
 			
 			self.currentPerson = ko.computed(function() {
@@ -125,10 +135,71 @@
 			
 		}
 		
+		function getPeople() {
+
+			var peopleArray = new Array();
+
+			var transaction = db.transaction(["people"], "readonly"); 
+			var objectStore = transaction.objectStore("people");
+			objectStore.openCursor().onsuccess = function(event) {
+				var cursor = event.target.result;
+				if(cursor) {
+					console.dir(cursor);
+					console.log(cursor.value.firstName);
+					var record = cursor.value;
+					var p = new PersonModel(record.firstName, record.lastName, record.phone, record.email);
+					peopleArray.push(p);
+					my.vm.people.push(p);
+					cursor.continue();
+				}
+			}
+			
+			transaction.oncomplete = function(event) {
+	            //$("#noteList").html(content);
+				//my.vm.people = peopleArray;
+	        };
+
+	        transaction.onerror = function(event) {
+	          // Don't forget to handle errors!
+	          console.dir(event);
+	        };
+			
+		}
+		
 		var my = { vm: new AppViewModel() }
 		
 		$(document).ready(function () {
 			ko.applyBindings(my.vm);
+			
+			var openRequest = indexedDB.open("peopleDB1",1);
+
+			openRequest.onupgradeneeded = function(e) {
+				var thisDB = e.target.result;
+
+				console.log("running onupgradeneeded");
+
+				if(!thisDB.objectStoreNames.contains("people")) {
+					thisDB.createObjectStore("people", { keyPath: "id", autoIncrement:true });
+					
+					//thisDB.createIndex("email", "email", {unique:true});
+				}
+			}
+
+			openRequest.onsuccess = function(e) {
+				console.log("running onsuccess");
+
+				db = e.target.result;
+
+				console.log("Current Object Stores");
+				console.dir(db.objectStoreNames);
+				getPeople();
+
+			}	
+
+			openRequest.onerror = function(e) {
+				//Do something for the error
+			}
+			
 		});
 	</script>
 </body>
