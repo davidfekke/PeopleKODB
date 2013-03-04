@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Note Database</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/bootstrap/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/bootstrap/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/bootstrap/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/bootstrap/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/bootstrap/ico/apple-touch-icon-57-precomposed.png">
+
+	<meta name="author" content="David P Fekke">
+	<!-- Date: 2013-03-03 -->
+	<style>
+		td.notetitle {
+	    	cursor:pointer;
+		}
+	</style>
+</head>
+<body>
+	
+	<div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+	          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </a>
+	          <a class="brand" href="#">People Database</a>
+	          <form class="navbar-search pull-left">
+	            <input type="text" class="search-query" placeholder="Search" id="filterField">
+	          </form>
+	        </div>
+	      </div>
+	    </div>
+
+	    <div class="container">
+
+		<h2 data-bind="visible: people().length > 0">People <span id="sizeSpan"></span></h2>
+
+		<div id="peopleList">
+			<table data-bind="foreach: people">
+				<tr>
+					<td data-bind="text: firstName"></td>
+					<td data-bind="text: lastName"></td>
+					<td data-bind="text: phone"></td>
+					<td data-bind="text: email"></td>
+				</tr>
+			</table>
+		</div>
+		<div id="peopleDetail"></div>
+
+		<h2>Edit Person</h2>
+		<form>
+	    <input type="hidden" id="key">
+		<input type="text" id="firstName" placeholder="First Name" data-bind="value: firstName" required /><br />
+		<input type="text" id="lastName" placeholder="Last Name" data-bind="value: lastName" required /><br />
+		<input type="text" id="phone" placeholder="Phone" data-bind="value: phone" required /><br />
+		<input type="text" id="email" placeholder="email" data-bind="value: email" required /><br />
+		<p>
+		<button id="addPeopleButton" data-bind="click: addPerson">Save Person</button> 
+		<button id="resetPeopleButton" data-bind="click: clearPerson">Reset Person</button>
+		<!-- id="addPeopleButton"  <button id="resetPeopleButton">Reset Person</button> -->
+		</p>
+		</form>
+
+	</div>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+	<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+	<script type="text/javascript">
+		function PersonModel(_firstName, _lastName, _phone, _email) {
+			var self = this;
+			
+			self.firstName = _firstName;
+			self.lastName = _lastName;
+			self.phone = _phone;
+			self.email = _email;
+		}
+		
+		function AppViewModel() {
+			var self = this;
+			
+			self.people = ko.observableArray();
+			
+			self.firstName = ko.observable('');
+			self.lastName = ko.observable('');
+			self.phone = ko.observable('');
+			self.email = ko.observable('');
+			
+			self.addPerson = function() {
+				var myPerson = new PersonModel(self.firstName(), self.lastName(), self.phone(), self.email());
+				self.people.push(myPerson);
+			}
+			
+			self.currentPerson = ko.computed(function() {
+				return new PersonModel(self.firstName, self.lastName, self.phone, self.email);
+			}, self);
+			
+			self.clearPerson = function() {
+				self.firstName('');
+				self.lastName('');
+				self.phone('');
+				self.email('');
+			}
+			
+		}
+		
+		var my = { vm: new AppViewModel() }
+		
+		$(document).ready(function () {
+			ko.applyBindings(my.vm);
+		});
+	</script>
+</body>
+</html>
