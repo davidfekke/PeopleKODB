@@ -1,0 +1,5 @@
+C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\bin\PeopleKODB.dll
+C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\bin\PeopleKODB.pdb
+C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.csprojResolveAssemblyReference.cache
+C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.dll
+C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.pdb
