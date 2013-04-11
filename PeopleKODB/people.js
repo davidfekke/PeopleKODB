@@ -1,6 +1,7 @@
 var db;
 var PersonModel = (function () {
-    function PersonModel(_firstName, _lastName, _phone, _email) {
+    function PersonModel(_key, _firstName, _lastName, _phone, _email) {
+        this.id = _key;
         this.firstName = _firstName;
         this.lastName = _lastName;
         this.phone = _phone;
@@ -12,22 +13,47 @@ var AppViewModel = (function () {
     function AppViewModel() {
         var _this = this;
         this.people = ko.observableArray();
+        this.key = ko.observable('');
         this.firstName = ko.observable('');
         this.lastName = ko.observable('');
         this.phone = ko.observable('');
         this.email = ko.observable('');
         this.currentPerson = ko.computed(function () {
-            return new PersonModel(_this.firstName, _this.lastName, _this.phone, _this.email);
+            return new PersonModel(_this.key, _this.firstName, _this.lastName, _this.phone, _this.email);
         });
     }
     AppViewModel.prototype.addPerson = function () {
-        var myPerson = new PersonModel(this.firstName(), this.lastName(), this.phone(), this.email());
+        var myPerson = new PersonModel(this.key(), this.firstName(), this.lastName(), this.phone(), this.email());
         this.people.push(myPerson);
         var transaction = db.transaction([
             "people"
         ], "readwrite");
         var store = transaction.objectStore("people");
-        store.add(myPerson);
+        if(my.vm.key() === "") {
+            store.add({
+                firstName: myPerson.firstName,
+                lastName: myPerson.lastName,
+                phone: myPerson.phone,
+                email: myPerson.email
+            });
+        } else {
+            store.put(myPerson);
+        }
+    };
+    AppViewModel.prototype.editPerson = function (p) {
+        my.vm.key(p.id);
+        my.vm.firstName(p.firstName);
+        my.vm.lastName(p.lastName);
+        my.vm.phone(p.phone);
+        my.vm.email(p.email);
+    };
+    AppViewModel.prototype.deletePerson = function (p) {
+        db.transaction([
+            "people"
+        ], "readwrite").objectStore("people").delete(p.id);
+        my.vm.people.remove(function (item) {
+            return item.id === p.id;
+        });
     };
     AppViewModel.prototype.clearPerson = function () {
         this.firstName('');
@@ -48,7 +74,7 @@ var getPeople = function () {
             console.dir(cursor);
             console.log(cursor.value.firstName);
             var record = cursor.value;
-            var p = new PersonModel(record.firstName, record.lastName, record.phone, record.email);
+            var p = new PersonModel(record.id, record.firstName, record.lastName, record.phone, record.email);
             my.vm.people.push(p);
             cursor.continue();
         }

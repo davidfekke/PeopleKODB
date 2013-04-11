@@ -11,13 +11,15 @@
 var db;
 
 class PersonModel {
-	firstName: string;
+    id: any;
+    firstName: string;
 	lastName: string;
 	phone: string;
 	email: string;
 	
-	constructor(_firstName, _lastName, _phone, _email) {
-        this.firstName = _firstName;
+	constructor(_key, _firstName, _lastName, _phone, _email) {
+	    this.id = _key;
+	    this.firstName = _firstName;
 		this.lastName = _lastName;
 		this.phone = _phone;
 		this.email = _email;
@@ -27,6 +29,7 @@ class PersonModel {
 class AppViewModel {
 	people = ko.observableArray();
 			
+	key = ko.observable('');
 	firstName = ko.observable('');
 	lastName = ko.observable('');
 	phone = ko.observable('');
@@ -36,12 +39,12 @@ class AppViewModel {
 	
 	constructor() {
 	    this.currentPerson = ko.computed(() => {
-	        return new PersonModel(this.firstName, this.lastName, this.phone, this.email);
+	        return new PersonModel(this.key, this.firstName, this.lastName, this.phone, this.email);
 	    });
 	}
 
 	addPerson(): void {
-		var myPerson = new PersonModel(this.firstName(), this.lastName(), this.phone(), this.email());
+		var myPerson = new PersonModel(this.key(), this.firstName(), this.lastName(), this.phone(), this.email());
 		this.people.push(myPerson);
 		
 		//Get a transaction
@@ -50,7 +53,25 @@ class AppViewModel {
 		//Ask for the objectStore
 		var store = transaction.objectStore("people");
 		
-		store.add(myPerson);
+		if (my.vm.key() === "") {
+		    store.add({ firstName: myPerson.firstName, lastName: myPerson.lastName, phone: myPerson.phone, email: myPerson.email });
+		} else {
+		    store.put(myPerson);
+		}
+		
+	}
+
+	editPerson(p: PersonModel): void {
+	    my.vm.key(p.id);
+	    my.vm.firstName(p.firstName);
+	    my.vm.lastName(p.lastName);
+	    my.vm.phone(p.phone);
+	    my.vm.email(p.email);
+	}
+
+	deletePerson(p: PersonModel): void {
+	    db.transaction(["people"], "readwrite").objectStore("people").delete (p.id);
+	    my.vm.people.remove((item: PersonModel) => { return item.id === p.id; });
 	}
 	
 	clearPerson(): void {
@@ -64,24 +85,24 @@ class AppViewModel {
 var getPeople = () =>  {
 	var transaction = db.transaction(["people"], "readonly"); 
 	var objectStore = transaction.objectStore("people");
-	objectStore.openCursor().onsuccess = (event) => {
+	objectStore.openCursor().onsuccess = (event:any) => {
 		var cursor = event.target.result;
 		if(cursor) {
 			console.dir(cursor);
 			console.log(cursor.value.firstName);
 			var record = cursor.value;
-			var p = new PersonModel(record.firstName, record.lastName, record.phone, record.email);
+			var p = new PersonModel(record.id, record.firstName, record.lastName, record.phone, record.email);
 			my.vm.people.push(p);
 			cursor.continue();
 		}
 	};
 	
-	transaction.oncomplete = (event) => {
+	transaction.oncomplete = (event:any) => {
 		//$("#noteList").html(content);
 		//my.vm.people = peopleArray;
 	};
 
-	transaction.onerror = (event) => {
+	transaction.onerror = (event:any) => {
 	  // Don't forget to handle errors!
 	  console.dir(event);
 	};
@@ -117,7 +138,7 @@ $(() => {
 
 	}	
 
-	openRequest.onerror = (e) => {
+	openRequest.onerror = (e:any) => {
 		//Do something for the error
 	}
 });

@@ -59,13 +59,28 @@
 		<h2 data-bind="visible: people().length > 0">People <span id="sizeSpan"></span></h2>
 
 		<div id="peopleList">
-			<table data-bind="foreach: people">
-				<tr>
-					<td data-bind="text: firstName"></td>
-					<td data-bind="text: lastName"></td>
-					<td data-bind="text: phone"></td>
-					<td data-bind="text: email"></td>
-				</tr>
+			<table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: people">
+                    <tr>
+					    <td data-bind="text: firstName"></td>
+					    <td data-bind="text: lastName"></td>
+					    <td data-bind="text: phone"></td>
+					    <td data-bind="text: email"></td>
+                        <td>
+                            <a class="btn btn-primary edit" data-bind="click: $parent.editPerson">Edit</a>
+                            <a class="btn btn-danger delete" data-bind="click: $parent.deletePerson">Delete</a>
+                        </td>
+				    </tr>
+                </tbody>
 			</table>
 		</div>
 		<div id="peopleDetail"></div>
