@@ -34,13 +34,16 @@
       <DependentUpon>app.ts</DependentUpon>
     </Content>
     <Content Include="index.html" />
+    <Content Include="jquery-1.9.1.min.js" />
     <Content Include="jquery.d.ts" />
     <Content Include="jqueryui.d.ts" />
+    <Content Include="knockout-2.2.1.js" />
     <Content Include="knockout-postbox.d.ts" />
     <Content Include="knockout.d.ts" />
     <Content Include="knockout.validation.d.ts" />
     <Content Include="knockout.viewmodel.d.ts" />
     <Content Include="ko.editables.d.ts" />
+    <Content Include="lib.d.ts" />
     <Content Include="people.js" />
     <Content Include="people.min.js">
       <DependentUpon>people.ts</DependentUpon>

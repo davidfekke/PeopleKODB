@@ -63,12 +63,8 @@ var AppViewModel = (function () {
     };
     return AppViewModel;
 })();
-var getPeople = function () {
-    var transaction = db.transaction([
-        "people"
-    ], "readonly");
-    var objectStore = transaction.objectStore("people");
-    objectStore.openCursor().onsuccess = function (event) {
+var getPeople = function (filter) {
+    var handleResult = function (event) {
         var cursor = event.target.result;
         if(cursor) {
             console.dir(cursor);
@@ -79,6 +75,11 @@ var getPeople = function () {
             cursor.continue();
         }
     };
+    var transaction = db.transaction([
+        "people"
+    ], "readonly");
+    var objectStore = transaction.objectStore("people");
+    objectStore.openCursor().onsuccess = handleResult;
     transaction.oncomplete = function (event) {
     };
     transaction.onerror = function (event) {
@@ -106,7 +107,7 @@ $(function () {
         db = e.target.result;
         console.log("Current Object Stores");
         console.dir(db.objectStoreNames);
-        getPeople();
+        getPeople(null);
     };
     openRequest.onerror = function (e) {
     };

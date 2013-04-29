@@ -82,20 +82,34 @@ class AppViewModel {
 	}
 }
 
-var getPeople = () =>  {
-	var transaction = db.transaction(["people"], "readonly"); 
+var getPeople = (filter) =>  {
+
+    var handleResult = (event: any) => {
+        var cursor = event.target.result;
+        if (cursor) {
+            console.dir(cursor);
+            console.log(cursor.value.firstName);
+            var record = cursor.value;
+            var p = new PersonModel(record.id, record.firstName, record.lastName, record.phone, record.email);
+            my.vm.people.push(p);
+            cursor.continue();
+        }
+    }
+
+
+    var transaction = db.transaction(["people"], "readonly");
 	var objectStore = transaction.objectStore("people");
-	objectStore.openCursor().onsuccess = (event:any) => {
-		var cursor = event.target.result;
-		if(cursor) {
-			console.dir(cursor);
-			console.log(cursor.value.firstName);
-			var record = cursor.value;
-			var p = new PersonModel(record.id, record.firstName, record.lastName, record.phone, record.email);
-			my.vm.people.push(p);
-			cursor.continue();
-		}
-	};
+
+	//if (filter) {
+
+	    //Credit: http://stackoverflow.com/a/8961462/52160
+	//    var range = IDBKeyRange.bound(filter, filter + "z");
+	//    var index = objectStore.index("title");
+	//    index.openCursor(range).onsuccess = handleResult;
+	//} else {
+	    objectStore.openCursor().onsuccess = handleResult;
+	//}
+	
 	
 	transaction.oncomplete = (event:any) => {
 		//$("#noteList").html(content);
@@ -107,6 +121,8 @@ var getPeople = () =>  {
 	  console.dir(event);
 	};
 }
+
+
 
 var my = { vm: new AppViewModel() }
 
@@ -134,7 +150,7 @@ $(() => {
 
 		console.log("Current Object Stores");
 		console.dir(db.objectStoreNames);
-		getPeople();
+		getPeople(null);
 
 	}	
 
