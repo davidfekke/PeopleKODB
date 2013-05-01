@@ -3,3 +3,8 @@ C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\bin\
 C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.csprojResolveAssemblyReference.cache
 C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.dll
 C:\Users\dfekke\Documents\Visual Studio 2012\Projects\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.pdb
+C:\Users\David Fekke\Documents\GitHub\PeopleKODB\PeopleKODB\bin\PeopleKODB.dll
+C:\Users\David Fekke\Documents\GitHub\PeopleKODB\PeopleKODB\bin\PeopleKODB.pdb
+C:\Users\David Fekke\Documents\GitHub\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.csprojResolveAssemblyReference.cache
+C:\Users\David Fekke\Documents\GitHub\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.dll
+C:\Users\David Fekke\Documents\GitHub\PeopleKODB\PeopleKODB\obj\Debug\PeopleKODB.pdb
